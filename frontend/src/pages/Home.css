@@ -1,0 +1,265 @@
+/* Home — logged-in patient utility screen */
+
+.home-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.home-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--topbar-pad-y) var(--topbar-pad-x);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.home-brand {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--color-teal);
+  letter-spacing: -0.02em;
+}
+
+.home-logout {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.home-logout:hover {
+  color: var(--color-text);
+  border-color: var(--color-border-hover);
+}
+
+.home-inner {
+  width: 100%;
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md) var(--space-2xl);
+}
+
+.home-welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+}
+
+@media (min-width: 560px) {
+  .home-welcome {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+}
+
+.home-greeting {
+  margin: 0 0 var(--space-xs);
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.home-welcome-text {
+  margin: 0;
+  max-width: 22rem;
+  color: var(--color-text-muted);
+  font-size: 0.975rem;
+}
+
+.home-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.8rem 1.15rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-teal);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.home-cta:hover {
+  background: var(--color-teal-hover);
+  color: #fff;
+}
+
+.home-welcome-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.home-secondary-link {
+  font-weight: 600;
+  font-size: 0.925rem;
+  color: var(--color-teal);
+  text-decoration: none;
+}
+
+.home-secondary-link:hover {
+  text-decoration: underline;
+  color: var(--color-teal-hover);
+}
+
+.home-section {
+  margin-bottom: var(--space-2xl);
+}
+
+.home-section-title {
+  margin: 0 0 var(--space-xs);
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.home-section-lead {
+  margin: 0 0 var(--space-md);
+  color: var(--color-text-muted);
+  font-size: 0.925rem;
+}
+
+.home-muted {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.925rem;
+}
+
+.home-empty {
+  padding: var(--space-lg);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.home-empty p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.home-error {
+  margin: 0 0 var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-error-border);
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.home-appt-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.home-appt-card {
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.home-appt-when {
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.home-appt-detail {
+  margin: 0;
+  font-size: 0.925rem;
+  color: var(--color-text-muted);
+}
+
+.home-appt-status {
+  margin: var(--space-xs) 0 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+  color: var(--color-teal);
+}
+
+.home-appt-status--pending {
+  color: var(--color-amber);
+}
+
+.home-appt-status--confirmed {
+  color: var(--color-teal);
+}
+
+.home-appt-status--completed {
+  color: var(--color-success-text);
+}
+
+.home-appt-status--cancelled,
+.home-appt-status--no_show {
+  color: var(--color-error);
+}
+
+.home-dept-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-sm);
+}
+
+@media (min-width: 520px) {
+  .home-dept-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.home-dept-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  height: 100%;
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.home-dept-card:hover {
+  border-color: var(--color-teal);
+  color: inherit;
+}
+
+.home-dept-name {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.home-dept-desc {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}

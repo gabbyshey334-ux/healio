@@ -1,0 +1,665 @@
+/* Admin Dashboard — phase 1: analytics + departments */
+
+.admin-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--topbar-pad-y) var(--topbar-pad-x);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.admin-brand {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--color-teal);
+  letter-spacing: -0.02em;
+}
+
+.admin-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.admin-who {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 420px) {
+  .admin-who {
+    display: none;
+  }
+}
+
+.admin-logout {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.admin-logout:hover {
+  color: var(--color-text);
+  border-color: var(--color-border-hover);
+}
+
+.admin-inner {
+  width: 100%;
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md) var(--space-2xl);
+}
+
+.admin-header {
+  margin-bottom: var(--space-xl);
+}
+
+.admin-title {
+  margin: 0 0 var(--space-xs);
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.admin-lead {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.admin-section {
+  margin-bottom: var(--space-2xl);
+}
+
+.admin-section-title {
+  margin: 0 0 var(--space-xs);
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.admin-section-lead {
+  margin: 0 0 var(--space-md);
+  color: var(--color-text-muted);
+  font-size: 0.925rem;
+}
+
+.admin-subheading {
+  margin: 0 0 var(--space-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.admin-error {
+  margin: 0 0 var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-error-border);
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  font-size: 0.9rem;
+}
+
+.admin-muted {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.925rem;
+}
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+@media (min-width: 640px) {
+  .admin-stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.admin-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  min-height: 5.5rem;
+}
+
+.admin-stat-value {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-teal);
+  line-height: 1.15;
+}
+
+.admin-stat-value--text {
+  font-size: 1.05rem;
+}
+
+.admin-stat-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+}
+
+.admin-dept-breakdown {
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.admin-breakdown-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.925rem;
+}
+
+.admin-breakdown-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.admin-breakdown-count {
+  font-weight: 700;
+  color: var(--color-teal);
+}
+
+.admin-create-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.admin-field label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.admin-optional {
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.admin-field input {
+  width: 100%;
+  padding: var(--control-pad-y) var(--control-pad-x);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+}
+
+.admin-field input:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px var(--color-teal-soft);
+}
+
+.admin-primary {
+  align-self: flex-start;
+  min-height: 2.5rem;
+  padding: 0.7rem 1.1rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-teal);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-primary:hover:not(:disabled) {
+  background: var(--color-teal-hover);
+}
+
+.admin-primary:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.admin-primary--compact {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.875rem;
+}
+
+.admin-secondary {
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.admin-secondary:hover:not(:disabled) {
+  color: var(--color-text);
+  border-color: var(--color-border-hover);
+}
+
+.admin-secondary:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.admin-empty {
+  padding: var(--space-lg);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  text-align: center;
+}
+
+.admin-empty p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.admin-dept-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.admin-dept-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+@media (max-width: 480px) {
+  .admin-dept-card {
+    flex-direction: column;
+  }
+
+  .admin-edit-actions {
+    flex-wrap: wrap;
+  }
+}
+
+.admin-dept-name {
+  margin: 0 0 0.2rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.admin-dept-desc {
+  margin: 0 0 0.35rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.admin-dept-meta {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-teal);
+}
+
+.admin-edit-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.admin-edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.admin-next-note {
+  margin: 0;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* Doctors section */
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+}
+
+@media (min-width: 520px) {
+  .admin-form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.admin-field select {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+}
+
+.admin-field select:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px var(--color-teal-soft);
+}
+
+.admin-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.admin-filter-row label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.admin-filter-row select {
+  min-width: 12rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+
+.admin-doctor-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.admin-group-title {
+  margin: 0 0 var(--space-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.admin-doctor-card {
+  align-items: flex-start;
+}
+
+.admin-badge {
+  display: inline-block;
+  margin: var(--space-xs) 0 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.admin-badge--active {
+  color: var(--color-teal);
+}
+
+.admin-badge--inactive {
+  color: var(--color-error);
+}
+
+.admin-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.admin-toggle input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--color-teal);
+}
+
+/* Appointments table */
+
+.admin-appt-filters {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+@media (min-width: 640px) {
+  .admin-appt-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 900px) {
+  .admin-appt-filters {
+    grid-template-columns: 1fr 1fr 1fr 1fr auto;
+    align-items: end;
+  }
+}
+
+.admin-appt-filter-actions {
+  display: flex;
+  align-items: flex-end;
+}
+
+.admin-field input[type='date'] {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+}
+
+.admin-appt-count {
+  margin: 0 0 var(--space-sm);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.75rem 0.85rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.admin-table th {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+  background: #f3efe8;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Mobile: card list instead of wide table */
+.admin-appt-cards {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.admin-appt-card {
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.admin-appt-card-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+.admin-appt-when {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 0.95rem;
+}
+
+.admin-appt-patient {
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--color-text);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.55rem;
+}
+
+.admin-appt-meta {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+@media (max-width: 719px) {
+  .admin-table-wrap {
+    display: none;
+  }
+
+  .admin-appt-cards {
+    display: flex;
+  }
+}
+
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.admin-page-indicator {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.admin-patient-cell {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.55rem;
+}
+
+/* Same status / risk language as Doctor Dashboard */
+.doc-status {
+  display: inline-block;
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+}
+
+.doc-risk {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--color-amber);
+  white-space: nowrap;
+}
+
+.doc-status--pending {
+  color: var(--color-amber);
+}
+
+.doc-status--confirmed {
+  color: var(--color-teal);
+}
+
+.doc-status--completed {
+  color: var(--color-success-text);
+}
+
+.doc-status--cancelled,
+.doc-status--no_show {
+  color: var(--color-error);
+}

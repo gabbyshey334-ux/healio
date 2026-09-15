@@ -1,0 +1,225 @@
+/* Healio landing — hero only */
+
+.land {
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.land-hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  color: #f9f6f1;
+}
+
+.land-hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.land-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transform: scale(1.06);
+  animation: land-ken 20s ease-out forwards;
+}
+
+@keyframes land-ken {
+  to {
+    transform: scale(1.01);
+  }
+}
+
+.land-hero-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 42, 38, 0.28) 0%,
+    rgba(10, 42, 38, 0.42) 45%,
+    rgba(10, 42, 38, 0.82) 100%
+  );
+}
+
+.land-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--topbar-pad-y) var(--topbar-pad-x);
+}
+
+.land-nav-brand {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #f9f6f1;
+}
+
+.land-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+.land-nav-link {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #f9f6f1;
+  text-decoration: none;
+}
+
+.land-nav-link:hover {
+  text-decoration: underline;
+  color: #fff;
+}
+
+.land-nav-staff {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(249, 246, 241, 0.72);
+  text-decoration: none;
+}
+
+.land-nav-staff:hover {
+  color: #f9f6f1;
+}
+
+.land-hero-copy {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 42rem;
+  padding: var(--space-2xl) var(--space-md) 3.75rem;
+}
+
+@media (min-width: 640px) {
+  .land-hero-copy {
+    padding: var(--space-2xl) var(--space-xl) 4.75rem;
+  }
+}
+
+.land-brand {
+  margin: 0 0 var(--space-md);
+  font-family: var(--font-serif);
+  font-size: clamp(2.85rem, 11vw, 4.5rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  color: #f9f6f1;
+}
+
+.land-headline {
+  margin: 0 0 var(--space-sm);
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 3.6vw, 1.85rem);
+  font-weight: 600;
+  line-height: 1.28;
+  max-width: 22rem;
+  color: #f9f6f1;
+}
+
+.land-support {
+  margin: 0 0 var(--space-xl);
+  font-size: 1.02rem;
+  line-height: 1.55;
+  color: rgba(249, 246, 241, 0.88);
+  max-width: 28rem;
+}
+
+.land-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.land-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.9rem;
+  padding: 0.75rem 1.35rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.975rem;
+  text-decoration: none;
+  border: 1.5px solid transparent;
+  transition: background-color 0.15s ease, color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.land-btn--light {
+  background: #f9f6f1;
+  color: var(--color-teal);
+}
+
+.land-btn--light:hover {
+  background: #fff;
+  color: var(--color-teal-hover);
+}
+
+.land-btn--ghost {
+  background: transparent;
+  color: #f9f6f1;
+  border-color: rgba(249, 246, 241, 0.65);
+}
+
+.land-btn--ghost:hover {
+  background: rgba(249, 246, 241, 0.1);
+  border-color: #f9f6f1;
+  color: #fff;
+}
+
+.land-rise {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: land-rise 0.75s ease forwards;
+}
+
+.land-rise--1 {
+  animation-delay: 0.06s;
+}
+.land-rise--2 {
+  animation-delay: 0.18s;
+}
+.land-rise--3 {
+  animation-delay: 0.3s;
+}
+.land-rise--4 {
+  animation-delay: 0.42s;
+}
+
+@keyframes land-rise {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .land-hero-img {
+    animation: none;
+    transform: none;
+  }
+  .land-rise {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}

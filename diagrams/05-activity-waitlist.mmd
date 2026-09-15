@@ -1,0 +1,27 @@
+flowchart TD
+  A[Doctor or Admin sets appointment status to cancelled] --> B[PATCH /api/appointments/:id/status]
+  B --> C{Status changed to cancelled?}
+  C -->|No| Z[Stop — no waitlist action]
+  C -->|Yes| D[notifyWaitlistOnCancel appointment]
+
+  D --> E[Query waitlist status waiting<br/>same department<br/>doctor NULL or matching<br/>preferred_date NULL or matching<br/>ORDER BY created_at ASC]
+
+  E --> F{Candidate rows found?}
+  F -->|No| G[Log: no matching waitlist entry]
+  G --> Z2[End]
+
+  F -->|Yes| H[Filter by preferred_period<br/>any OR morning/afternoon from slot time]
+  H --> I{Match after period filter?}
+  I -->|No| G
+  I -->|Yes| J[UPDATE waitlist<br/>status notified<br/>store notified_doctor_id date time]
+
+  J --> K[INSERT notifications<br/>channel log + message]
+  K --> L[Patient sees Notified on My Waitlist]
+
+  L --> M{Patient action}
+  M -->|Book now| N[POST /api/waitlist/:id/convert]
+  N --> O{Slot still free?}
+  O -->|Yes| P[INSERT appointment pending<br/>waitlist status booked]
+  O -->|No| Q[409 Slot already taken]
+  M -->|Cancel entry| R[PATCH waitlist status cancelled]
+  M -->|Ignores offer| S[Entry remains notified<br/>may later expire or stay until converted]

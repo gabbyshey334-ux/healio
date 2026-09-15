@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.local
+.env.*.local
+.DS_Store
+dist/
+*.log
+.mysql/
+frontend/dist/
+backend/dist/
+*.zip

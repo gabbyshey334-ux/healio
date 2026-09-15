@@ -1,0 +1,248 @@
+/* My Waitlist — matches Home / Book calm clinical language */
+
+.wait-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.wait-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--topbar-pad-y) var(--topbar-pad-x);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.wait-brand {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--color-teal);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.wait-logout {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.wait-inner {
+  width: 100%;
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-md) var(--space-2xl);
+}
+
+.wait-back {
+  margin: 0 0 var(--space-md);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-teal);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.wait-title {
+  margin: 0 0 var(--space-xs);
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.wait-lead {
+  margin: 0 0 var(--space-lg);
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.wait-error {
+  margin: 0 0 var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-error-border);
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  font-size: 0.9rem;
+}
+
+.wait-success {
+  margin: 0 0 var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  border: 1px solid #b7d9d3;
+  background: var(--color-teal-soft);
+  color: var(--color-teal-hover);
+  font-size: 0.9rem;
+}
+
+.wait-muted {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.wait-empty {
+  padding: var(--space-xl) var(--space-lg);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  text-align: center;
+}
+
+.wait-empty p {
+  margin: 0 0 var(--space-md);
+  color: var(--color-text-muted);
+}
+
+.wait-cta {
+  display: inline-flex;
+  padding: 0.7rem 1.1rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-teal);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.wait-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.wait-card {
+  padding: var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.wait-dept {
+  margin: 0 0 0.2rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.wait-doctor,
+.wait-pref {
+  margin: 0 0 0.25rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.wait-status {
+  display: inline-block;
+  margin: var(--space-xs) 0 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.wait-status--waiting {
+  color: var(--color-amber);
+}
+
+.wait-status--notified {
+  color: var(--color-teal);
+}
+
+.wait-status--booked {
+  color: var(--color-success-text);
+}
+
+.wait-status--cancelled,
+.wait-status--expired {
+  color: var(--color-error);
+}
+
+.wait-offer {
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  background: var(--color-teal-soft);
+  border: 1px solid #b5d4cd;
+}
+
+.wait-offer-label {
+  margin: 0 0 0.15rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-teal-hover);
+}
+
+.wait-offer-detail {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.wait-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+
+@media (max-width: 420px) {
+  .wait-actions {
+    flex-direction: column;
+  }
+
+  .wait-primary,
+  .wait-secondary {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.wait-primary {
+  padding: 0.55rem 0.95rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-teal);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.wait-primary:hover:not(:disabled) {
+  background: var(--color-teal-hover);
+}
+
+.wait-primary:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.wait-secondary {
+  padding: 0.55rem 0.95rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.wait-secondary:hover:not(:disabled) {
+  color: var(--color-text);
+}

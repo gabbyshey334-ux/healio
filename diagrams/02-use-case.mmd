@@ -1,0 +1,59 @@
+flowchart TB
+  subgraph Actors
+    Patient((Patient))
+    Doctor((Doctor))
+    Admin((Admin))
+  end
+
+  subgraph PatientUC["Patient use cases"]
+    P1[Register account]
+    P2[Login]
+    P3[Browse departments and doctors]
+    P4[Book appointment]
+    P5[View upcoming appointments]
+    P6[Join waitlist]
+    P7[View waitlist]
+    P8[Cancel waitlist entry]
+    P9[Convert waitlist to booking]
+  end
+
+  subgraph DoctorUC["Doctor use cases"]
+    D1[Login]
+    D2[View today's appointments]
+    D3[Update appointment status]
+  end
+
+  subgraph AdminUC["Admin use cases"]
+    A1[Login]
+    A2[Manage departments]
+    A3[Manage doctors]
+    A4[View clinic-wide appointments]
+    A5[View analytics]
+    A6[View waitlist]
+  end
+
+  Patient --> P1
+  Patient --> P2
+  Patient --> P3
+  Patient --> P4
+  Patient --> P5
+  Patient --> P6
+  Patient --> P7
+  Patient --> P8
+  Patient --> P9
+
+  Doctor --> D1
+  Doctor --> D2
+  Doctor --> D3
+
+  Admin --> A1
+  Admin --> A2
+  Admin --> A3
+  Admin --> A4
+  Admin --> A5
+  Admin --> A6
+
+  P4 -.->|includes| P3
+  P9 -.->|extends notified entry| P7
+  D3 -.->|confirm completed cancelled no_show| D2
+  A3 -.->|create doctor via auth route| A1

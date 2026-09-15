@@ -1,0 +1,30 @@
+sequenceDiagram
+  actor Patient
+  participant FE as Frontend
+  participant API as Backend API
+  participant DB as MySQL
+
+  Note over Patient,DB: Select an open slot
+  Patient->>FE: Choose department, doctor, date
+  FE->>API: GET /api/doctors/:id/availability?date=
+  API->>DB: SELECT appointments for doctor+date where status not cancelled
+  DB-->>API: Booked times
+  API-->>FE: Available 30-min slots
+  Patient->>FE: Select slot and continue to confirm
+
+  Note over Patient,DB: Happy path — book slot
+  Patient->>FE: Confirm booking
+  FE->>API: POST /api/appointments JWT patient
+  API->>DB: Validate doctor active and department match
+  API->>DB: INSERT appointments status pending duration 30
+  alt Unique slot free
+    DB-->>API: insertId
+    API->>DB: SELECT appointment with doctor and department
+    DB-->>API: Appointment row
+    API-->>FE: 201 appointment
+    FE-->>Patient: Success — Appointment confirmed
+  else Slot already taken ER_DUP_ENTRY
+    DB-->>API: Duplicate key on doctor date time or active_slot_key
+    API-->>FE: 409 Slot already taken
+    FE-->>Patient: Error — pick another time
+  end

@@ -1,0 +1,121 @@
+classDiagram
+  class Department {
+    +int id
+    +string name
+    +string description
+    +datetime created_at
+    +datetime updated_at
+  }
+
+  class Patient {
+    +int id
+    +string matric_or_staff_id
+    +string first_name
+    +string last_name
+    +string email
+    +string password_hash
+    +string phone
+    +enum gender
+    +date date_of_birth
+    +enum user_type
+    +register()
+    +login()
+    +bookAppointment()
+    +joinWaitlist()
+    +viewUpcoming()
+    +convertWaitlist()
+  }
+
+  class Doctor {
+    +int id
+    +int department_id
+    +string first_name
+    +string last_name
+    +string email
+    +string password_hash
+    +string phone
+    +string specialization
+    +boolean is_active
+    +login()
+    +viewTodayAppointments()
+    +updateAppointmentStatus()
+  }
+
+  class Admin {
+    +int id
+    +string first_name
+    +string last_name
+    +string email
+    +string password_hash
+    +login()
+    +createDepartment()
+    +updateDepartment()
+    +createDoctor()
+    +updateDoctor()
+    +viewAppointments()
+    +viewAnalytics()
+    +viewWaitlist()
+  }
+
+  class Appointment {
+    +int id
+    +int patient_id
+    +int doctor_id
+    +int department_id
+    +date appointment_date
+    +time appointment_time
+    +int duration_minutes
+    +enum status
+    +string reason
+    +string active_slot_key
+    +create()
+    +updateStatus()
+    +listUpcoming()
+  }
+
+  class WaitlistEntry {
+    +int id
+    +int patient_id
+    +int department_id
+    +int doctor_id
+    +date preferred_date
+    +enum preferred_period
+    +enum status
+    +string notes
+    +int notified_doctor_id
+    +date notified_date
+    +time notified_time
+    +join()
+    +cancel()
+    +convertToBooking()
+  }
+
+  class Notification {
+    +int id
+    +int patient_id
+    +int waitlist_id
+    +int appointment_id
+    +enum channel
+    +string message
+    +datetime created_at
+  }
+
+  class WaitlistNotifyService {
+    +notifyWaitlistOnCancel(appointment)$
+  }
+
+  Department "1" --> "*" Doctor : has
+  Department "1" --> "*" Appointment : books_into
+  Department "1" --> "*" WaitlistEntry : queues_for
+  Patient "1" --> "*" Appointment : books
+  Patient "1" --> "*" WaitlistEntry : joins
+  Patient "1" --> "*" Notification : receives
+  Doctor "1" --> "*" Appointment : serves
+  Doctor "0..1" --> "*" WaitlistEntry : preferred
+  WaitlistEntry "0..1" --> "*" Notification : triggers
+  Appointment "0..1" --> "*" Notification : frees_slot
+  Appointment ..> WaitlistNotifyService : on cancel
+  Admin ..> Department : manages
+  Admin ..> Doctor : manages
+  Admin ..> Appointment : views
+  Admin ..> WaitlistEntry : views

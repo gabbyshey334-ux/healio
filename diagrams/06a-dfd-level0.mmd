@@ -1,0 +1,14 @@
+flowchart TB
+  subgraph Level0["Level 0 — Context diagram"]
+    Patient0((Patient))
+    Doctor0((Doctor))
+    Admin0((Admin))
+    Healio[Healio System]
+
+    Patient0 -->|Register login book waitlist| Healio
+    Healio -->|Upcoming appointments waitlist offers| Patient0
+    Doctor0 -->|Login today list status updates| Healio
+    Healio -->|Today appointments risk flags| Doctor0
+    Admin0 -->|Login manage clinic view analytics| Healio
+    Healio -->|Departments doctors appointments analytics| Admin0
+  end

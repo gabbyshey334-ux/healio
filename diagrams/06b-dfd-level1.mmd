@@ -1,0 +1,52 @@
+flowchart LR
+  subgraph Ext["External entities"]
+    Patient((Patient))
+    Doctor((Doctor))
+    Admin((Admin))
+  end
+
+  subgraph Healio["Healio — Level 1 processes"]
+    P1[1.0 Authentication]
+    P2[2.0 Appointment Booking]
+    P3[3.0 Waitlist Management]
+    P4[4.0 Clinic Administration]
+  end
+
+  subgraph DataStores["Data stores"]
+    D1[(D1 patients doctors admins)]
+    D2[(D2 departments)]
+    D3[(D3 appointments)]
+    D4[(D4 waitlist)]
+    D5[(D5 notifications)]
+  end
+
+  Patient -->|register login credentials| P1
+  Doctor -->|login credentials| P1
+  Admin -->|login credentials| P1
+  P1 -->|JWT session user| Patient
+  P1 -->|JWT session user| Doctor
+  P1 -->|JWT session user| Admin
+  P1 <-->|read write accounts| D1
+
+  Patient -->|select slot book| P2
+  P2 -->|availability upcoming| Patient
+  Doctor -->|view today update status| P2
+  P2 -->|today list| Doctor
+  P2 <-->|slots bookings status| D3
+  P2 -->|read doctors departments| D1
+  P2 -->|read| D2
+  P2 -->|on cancel trigger| P3
+
+  Patient -->|join view cancel convert| P3
+  P3 -->|notified offers| Patient
+  P3 <-->|entries offered slots| D4
+  P3 -->|write log alerts| D5
+  P3 -->|create booking on convert| D3
+
+  Admin -->|CRUD departments doctors| P4
+  Admin -->|view appointments waitlist analytics| P4
+  P4 -->|clinic reports| Admin
+  P4 <-->|departments| D2
+  P4 <-->|doctors| D1
+  P4 -->|read appointments| D3
+  P4 -->|read waitlist| D4

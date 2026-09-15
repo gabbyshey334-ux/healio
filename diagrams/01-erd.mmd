@@ -1,0 +1,102 @@
+erDiagram
+  departments ||--o{ doctors : "department_id"
+  departments ||--o{ appointments : "department_id"
+  departments ||--o{ waitlist : "department_id"
+
+  patients ||--o{ appointments : "patient_id"
+  patients ||--o{ waitlist : "patient_id"
+  patients ||--o{ notifications : "patient_id"
+
+  doctors ||--o{ appointments : "doctor_id"
+  doctors |o--o{ waitlist : "doctor_id nullable"
+
+  waitlist |o--o{ notifications : "waitlist_id"
+  appointments |o--o{ notifications : "appointment_id"
+
+  departments {
+    int id PK
+    varchar name UK
+    text description
+    datetime created_at
+    datetime updated_at
+  }
+
+  patients {
+    int id PK
+    varchar matric_or_staff_id UK
+    varchar first_name
+    varchar last_name
+    varchar email UK
+    varchar password_hash
+    varchar phone
+    enum gender
+    date date_of_birth
+    enum user_type
+    datetime created_at
+    datetime updated_at
+  }
+
+  doctors {
+    int id PK
+    int department_id FK
+    varchar first_name
+    varchar last_name
+    varchar email UK
+    varchar password_hash
+    varchar phone
+    varchar specialization
+    tinyint is_active
+    datetime created_at
+    datetime updated_at
+  }
+
+  admins {
+    int id PK
+    varchar first_name
+    varchar last_name
+    varchar email UK
+    varchar password_hash
+    datetime created_at
+    datetime updated_at
+  }
+
+  appointments {
+    int id PK
+    int patient_id FK
+    int doctor_id FK
+    int department_id FK
+    date appointment_date
+    time appointment_time
+    int duration_minutes
+    enum status
+    varchar reason
+    varchar active_slot_key UK
+    datetime created_at
+    datetime updated_at
+  }
+
+  waitlist {
+    int id PK
+    int patient_id FK
+    int department_id FK
+    int doctor_id FK
+    date preferred_date
+    enum preferred_period
+    enum status
+    varchar notes
+    int notified_doctor_id
+    date notified_date
+    time notified_time
+    datetime created_at
+    datetime updated_at
+  }
+
+  notifications {
+    int id PK
+    int patient_id FK
+    int waitlist_id FK
+    int appointment_id FK
+    enum channel
+    varchar message
+    datetime created_at
+  }
