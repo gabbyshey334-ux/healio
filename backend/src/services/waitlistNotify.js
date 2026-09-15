@@ -2,7 +2,7 @@
  * Waitlist helpers — notify the oldest matching patient when a slot frees up.
  */
 
-import pool from '../../../database/connection.js';
+import pool from '../db.js';
 
 function periodFromTime(sqlTime) {
   let hour = 0;

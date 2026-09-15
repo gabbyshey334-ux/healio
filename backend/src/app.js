@@ -1,6 +1,9 @@
 /**
- * Healio Express app (no listen) — used by server.js and automated tests.
+ * Healio Express app (no listen) — used by server.js, tests, and Vercel.
  */
+
+import dotenv from 'dotenv';
+dotenv.config();
 
 import express from 'express';
 import cors from 'cors';

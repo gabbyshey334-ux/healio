@@ -1,6 +1,8 @@
 /**
  * Run SQL migrations against the Healio MySQL database.
  * Usage: npm run migrate (from backend/)
+ *
+ * Works with local MySQL, TiDB Cloud (TIDB_*), or DATABASE_URL=mysql://...
  */
 
 import fs from 'fs';
@@ -14,27 +16,54 @@ dotenv.config();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const migrationsDir = path.resolve(__dirname, '../../database/migrations');
 
-async function migrate() {
-  const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD } = process.env;
-
-  if (!DB_USER) {
-    throw new Error('DB_USER is required in backend/.env');
+function connectionConfig() {
+  if (process.env.DATABASE_URL) {
+    const url = new URL(process.env.DATABASE_URL);
+    return {
+      user: decodeURIComponent(url.username),
+      password: decodeURIComponent(url.password),
+      host: url.hostname,
+      port: Number(url.port) || 3306,
+      multipleStatements: true,
+      ssl: { rejectUnauthorized: true },
+    };
   }
 
-  // Connect without DB_NAME so CREATE DATABASE can run
+  const user = process.env.TIDB_USER || process.env.DB_USER;
+  const password = process.env.TIDB_PASSWORD ?? process.env.DB_PASSWORD ?? '';
+  const host = process.env.TIDB_HOST || process.env.DB_HOST || '127.0.0.1';
+  const port = Number(process.env.TIDB_PORT || process.env.DB_PORT || 3306);
+
+  if (!user) {
+    throw new Error('DB_USER or TIDB_USER (or DATABASE_URL) is required');
+  }
+
   const config = {
-    user: DB_USER,
-    password: DB_PASSWORD || '',
+    user,
+    password,
     multipleStatements: true,
   };
 
-  if (process.env.DB_SOCKET) {
+  if (process.env.DB_SOCKET && !process.env.TIDB_HOST) {
     config.socketPath = process.env.DB_SOCKET;
   } else {
-    config.host = DB_HOST || '127.0.0.1';
-    config.port = Number(DB_PORT) || 3306;
+    config.host = host;
+    config.port = port;
   }
 
+  if (
+    process.env.DB_SSL === 'true' ||
+    process.env.TIDB_HOST ||
+    String(host).includes('tidbcloud.com')
+  ) {
+    config.ssl = { rejectUnauthorized: true };
+  }
+
+  return config;
+}
+
+async function migrate() {
+  const config = connectionConfig();
   const connection = await mysql.createConnection(config);
 
   const files = fs

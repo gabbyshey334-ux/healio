@@ -2,7 +2,7 @@
  * Booking / department API helpers for the patient book flow.
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_BASE } from './config.js';
 
 async function parseResponse(res) {
   let data = null;

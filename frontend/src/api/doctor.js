@@ -2,7 +2,7 @@
  * Doctor dashboard API helpers.
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_BASE } from './config.js';
 
 async function parseResponse(res) {
   let data = null;

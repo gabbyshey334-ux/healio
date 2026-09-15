@@ -2,7 +2,7 @@
  * Patient auth API helpers — talk to the Healio Express backend.
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_BASE } from './config.js';
 
 async function postJson(path, body) {
   const res = await fetch(`${API_BASE}${path}`, {

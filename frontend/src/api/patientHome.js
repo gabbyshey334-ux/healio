@@ -3,7 +3,7 @@
  * Departments come from GET /api/departments.
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_BASE } from './config.js';
 
 export async function fetchDepartments() {
   const res = await fetch(`${API_BASE}/api/departments`);

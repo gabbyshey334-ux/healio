@@ -5,7 +5,7 @@
  */
 
 import { Router } from 'express';
-import pool from '../../../database/connection.js';
+import pool from '../db.js';
 import { requireAuth } from '../middleware/auth.js';
 import { notifyWaitlistOnCancel } from '../services/waitlistNotify.js';
 

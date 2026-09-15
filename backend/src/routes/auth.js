@@ -9,7 +9,7 @@
 
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
-import pool from '../../../database/connection.js';
+import pool from '../db.js';
 import { signToken } from '../utils/jwt.js';
 import { requireAuth } from '../middleware/auth.js';
 
