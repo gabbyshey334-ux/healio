@@ -633,15 +633,20 @@ function printCredentials() {
   console.log(`           (notified — Book now on My waitlist)\n`);
 }
 
-seed({ keepExisting: process.argv.includes('--keep'), closePool: true }).catch(
-  async (err) => {
-    console.error('Seed failed:', err.message);
-    console.error(err);
-    try {
-      await pool.end();
-    } catch {
-      /* ignore */
-    }
-    process.exit(1);
-  },
-);
+import { fileURLToPath } from 'url';
+
+const isMain = process.argv[1] === fileURLToPath(import.meta.url);
+if (isMain) {
+  seed({ keepExisting: process.argv.includes('--keep'), closePool: true }).catch(
+    async (err) => {
+      console.error('Seed failed:', err.message);
+      console.error(err);
+      try {
+        await pool.end();
+      } catch {
+        /* ignore */
+      }
+      process.exit(1);
+    },
+  );
+}

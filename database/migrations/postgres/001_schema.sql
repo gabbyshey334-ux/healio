@@ -59,20 +59,15 @@ CREATE TABLE IF NOT EXISTS appointments (
   duration_minutes INT NOT NULL DEFAULT 30,
   status VARCHAR(20) NOT NULL DEFAULT 'pending',
   reason VARCHAR(500) NULL,
-  active_slot_key VARCHAR(64) GENERATED ALWAYS AS (
-    CASE
-      WHEN status IN ('pending', 'confirmed')
-        THEN doctor_id::text || '-' || appointment_date::text || '-' || appointment_time::text
-      ELSE NULL
-    END
-  ) STORED,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE (doctor_id, appointment_date, appointment_time)
 );
 
+-- Only pending/confirmed appointments occupy a bookable slot
 CREATE UNIQUE INDEX IF NOT EXISTS uq_appointments_active_slot
-  ON appointments (active_slot_key);
+  ON appointments (doctor_id, appointment_date, appointment_time)
+  WHERE status IN ('pending', 'confirmed');
 
 CREATE INDEX IF NOT EXISTS idx_appointments_patient_status
   ON appointments (patient_id, status);
