@@ -50,8 +50,8 @@ router.get('/analytics', async (_req, res) => {
 
     const [[statusRow]] = await pool.query(
       `SELECT
-         SUM(status = 'no_show') AS no_shows,
-         SUM(status IN ('completed', 'no_show', 'cancelled')) AS closed
+         COUNT(*) FILTER (WHERE status = 'no_show') AS no_shows,
+         COUNT(*) FILTER (WHERE status IN ('completed', 'no_show', 'cancelled')) AS closed
        FROM appointments
        WHERE appointment_date BETWEEN ? AND ?`,
       [weekStart, today],
