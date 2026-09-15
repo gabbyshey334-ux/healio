@@ -115,7 +115,7 @@ async function loginFromTable(table, role, email, password, res) {
 
   const row = rows[0];
 
-  if (role === 'doctor' && row.is_active === 0) {
+  if (role === 'doctor' && !row.is_active) {
     return res.status(403).json({ error: 'Doctor account is inactive' });
   }
 

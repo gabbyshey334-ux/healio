@@ -1,87 +1,141 @@
 /**
- * Healio MySQL pool — credentials from env only.
+ * Healio DB pool — MySQL locally, Neon Postgres on Vercel.
  *
- * Supports:
- * - Local: DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME [, DB_SOCKET]
- * - TiDB Cloud / Marketplace: TIDB_HOST, TIDB_PORT, TIDB_USER, TIDB_PASSWORD, TIDB_DATABASE
- * - URL form: DATABASE_URL=mysql://user:pass@host:port/db
+ * Uses DATABASE_URL / POSTGRES_URL when present (postgres://…).
+ * Otherwise falls back to classic MySQL env vars (DB_* / TIDB_*).
+ *
+ * Exposes a mysql2-compatible surface: query(), getConnection(),
+ * beginTransaction/commit/rollback, and insertId on INSERT results.
  */
 
-import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, '../.env') }); // backend/.env
-dotenv.config({ path: path.resolve(__dirname, '../../.env') }); // repo root
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 dotenv.config();
 
-function configFromDatabaseUrl(urlString) {
-  const url = new URL(urlString);
-  if (url.protocol !== 'mysql:' && url.protocol !== 'mysql2:') {
-    throw new Error('DATABASE_URL must use mysql://');
-  }
+const connectionString =
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.POSTGRES_PRISMA_URL;
+
+export const isPostgres = Boolean(
+  connectionString && /^postgres(ql)?:\/\//i.test(connectionString),
+);
+
+function toPgPlaceholders(sql) {
+  let i = 0;
+  return sql.replace(/\?/g, () => `$${++i}`);
+}
+
+function wrapPgClient(client) {
   return {
-    user: decodeURIComponent(url.username),
-    password: decodeURIComponent(url.password),
-    host: url.hostname,
-    port: Number(url.port) || 3306,
-    database: url.pathname.replace(/^\//, '') || undefined,
+    async query(sql, params = []) {
+      let text = toPgPlaceholders(sql);
+      const isInsert = /^\s*INSERT\s+/i.test(sql) && !/\bRETURNING\b/i.test(sql);
+      if (isInsert) {
+        text = `${text.replace(/\s*;?\s*$/, '')} RETURNING id`;
+      }
+      const result = await client.query(text, params);
+      if (isInsert) {
+        return [
+          {
+            insertId: result.rows[0]?.id,
+            affectedRows: result.rowCount,
+            rowCount: result.rowCount,
+          },
+        ];
+      }
+      return [result.rows];
+    },
+    async beginTransaction() {
+      await client.query('BEGIN');
+    },
+    async commit() {
+      await client.query('COMMIT');
+    },
+    async rollback() {
+      await client.query('ROLLBACK');
+    },
+    release() {
+      client.release?.();
+    },
   };
 }
 
-function buildPoolConfig() {
-  if (process.env.DATABASE_URL) {
-    return configFromDatabaseUrl(process.env.DATABASE_URL);
-  }
+async function createPostgresPool() {
+  const { Pool, neonConfig } = await import('@neondatabase/serverless');
+  const ws = (await import('ws')).default;
+  neonConfig.webSocketConstructor = ws;
 
-  const user = process.env.TIDB_USER || process.env.DB_USER;
-  const password = process.env.TIDB_PASSWORD ?? process.env.DB_PASSWORD ?? '';
-  const database = process.env.TIDB_DATABASE || process.env.DB_NAME;
-  const host = process.env.TIDB_HOST || process.env.DB_HOST || '127.0.0.1';
-  const port = Number(process.env.TIDB_PORT || process.env.DB_PORT || 3306);
+  const pool = new Pool({ connectionString });
 
-  const config = {
-    user,
-    password,
-    database,
-    waitForConnections: true,
-    connectionLimit: 5,
-    enableKeepAlive: true,
+  return {
+    async query(sql, params = []) {
+      return wrapPgClient(pool).query(sql, params);
+    },
+    async getConnection() {
+      const client = await pool.connect();
+      return wrapPgClient(client);
+    },
+    async end() {
+      await pool.end();
+    },
   };
-
-  if (process.env.DB_SOCKET && !process.env.TIDB_HOST) {
-    config.socketPath = process.env.DB_SOCKET;
-  } else {
-    config.host = host;
-    config.port = port;
-  }
-
-  const needsSsl =
-    process.env.DB_SSL === 'true' ||
-    process.env.DB_SSL === '1' ||
-    Boolean(process.env.TIDB_HOST) ||
-    (typeof host === 'string' &&
-      (host.includes('tidbcloud.com') ||
-        host.includes('psdb.cloud') ||
-        host.endsWith('.railway.app')));
-
-  if (needsSsl) {
-    config.ssl = { rejectUnauthorized: true };
-  }
-
-  return config;
 }
 
-const poolConfig = buildPoolConfig();
+function createMysqlPool() {
+  // Lazy sync import via createRequire-style dynamic — keep mysql2 for local
+  return import('mysql2/promise').then((mysql) => {
+    const user = process.env.TIDB_USER || process.env.DB_USER;
+    const password = process.env.TIDB_PASSWORD ?? process.env.DB_PASSWORD ?? '';
+    const database = process.env.TIDB_DATABASE || process.env.DB_NAME;
+    const host = process.env.TIDB_HOST || process.env.DB_HOST || '127.0.0.1';
+    const port = Number(process.env.TIDB_PORT || process.env.DB_PORT || 3306);
 
-if (!poolConfig.user || !poolConfig.database) {
-  console.warn(
-    '[database] Missing DB user or database name (set DB_* , TIDB_* , or DATABASE_URL)',
-  );
+    const config = {
+      user,
+      password,
+      database,
+      waitForConnections: true,
+      connectionLimit: 5,
+      enableKeepAlive: true,
+    };
+
+    if (process.env.DB_SOCKET && !process.env.TIDB_HOST) {
+      config.socketPath = process.env.DB_SOCKET;
+    } else {
+      config.host = host;
+      config.port = port;
+    }
+
+    if (
+      process.env.DB_SSL === 'true' ||
+      process.env.TIDB_HOST ||
+      String(host).includes('tidbcloud.com')
+    ) {
+      config.ssl = { rejectUnauthorized: true };
+    }
+
+    if (!user || !database) {
+      console.warn('[database] Missing DB user or database name');
+    }
+
+    return mysql.createPool(config);
+  });
 }
 
-const pool = mysql.createPool(poolConfig);
+const pool = isPostgres
+  ? await createPostgresPool()
+  : await createMysqlPool();
+
+if (isPostgres) {
+  console.log('[database] Using Neon/Postgres');
+} else {
+  console.log('[database] Using MySQL');
+}
 
 export default pool;

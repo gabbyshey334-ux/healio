@@ -15,7 +15,7 @@
 
 import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
-import pool from '../../database/connection.js';
+import pool, { isPostgres } from '../src/db.js';
 
 dotenv.config();
 
@@ -134,6 +134,17 @@ function isoDaysFromToday(offset) {
 }
 
 async function upsertDepartment(dept) {
+  if (isPostgres) {
+    await pool.query(
+      `INSERT INTO departments (id, name, description)
+       VALUES (?, ?, ?)
+       ON CONFLICT (id) DO UPDATE SET
+         name = EXCLUDED.name,
+         description = EXCLUDED.description`,
+      [dept.id, dept.name, dept.description],
+    );
+    return;
+  }
   await pool.query(
     `INSERT INTO departments (id, name, description)
      VALUES (?, ?, ?)
@@ -145,6 +156,18 @@ async function upsertDepartment(dept) {
 }
 
 async function upsertAdmin(passwordHash) {
+  if (isPostgres) {
+    await pool.query(
+      `INSERT INTO admins (first_name, last_name, email, password_hash)
+       VALUES ('Clinic', 'Admin', ?, ?)
+       ON CONFLICT (email) DO UPDATE SET
+         first_name = EXCLUDED.first_name,
+         last_name = EXCLUDED.last_name,
+         password_hash = EXCLUDED.password_hash`,
+      [ADMIN_EMAIL, passwordHash],
+    );
+    return;
+  }
   await pool.query(
     `INSERT INTO admins (first_name, last_name, email, password_hash)
      VALUES ('Clinic', 'Admin', ?, ?)
@@ -157,6 +180,32 @@ async function upsertAdmin(passwordHash) {
 }
 
 async function upsertDoctor(doc, passwordHash) {
+  if (isPostgres) {
+    await pool.query(
+      `INSERT INTO doctors
+        (department_id, first_name, last_name, email, password_hash, phone, specialization, is_active)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT (email) DO UPDATE SET
+         department_id = EXCLUDED.department_id,
+         first_name = EXCLUDED.first_name,
+         last_name = EXCLUDED.last_name,
+         password_hash = EXCLUDED.password_hash,
+         phone = EXCLUDED.phone,
+         specialization = EXCLUDED.specialization,
+         is_active = EXCLUDED.is_active`,
+      [
+        doc.department_id,
+        doc.first_name,
+        doc.last_name,
+        doc.email,
+        passwordHash,
+        doc.phone,
+        doc.specialization,
+        Boolean(doc.is_active),
+      ],
+    );
+    return;
+  }
   await pool.query(
     `INSERT INTO doctors
       (department_id, first_name, last_name, email, password_hash, phone, specialization, is_active)
@@ -208,13 +257,22 @@ async function insertPatient(p, passwordHash) {
   return result.insertId;
 }
 
-async function seed() {
-  const keepExisting = process.argv.includes('--keep');
+async function seed({ keepExisting = false, closePool = true } = {}) {
+  if (typeof keepExisting !== 'boolean') {
+    // CLI: npm run seed -- --keep
+    keepExisting = process.argv.includes('--keep');
+  }
 
   console.log('Seeding Healio demo data…');
 
   for (const dept of DEPARTMENTS) {
     await upsertDepartment(dept);
+  }
+  if (isPostgres) {
+    await pool.query(
+      `SELECT setval(pg_get_serial_sequence('departments', 'id'),
+        COALESCE((SELECT MAX(id) FROM departments), 1))`,
+    );
   }
   console.log(`  ✓ ${DEPARTMENTS.length} departments`);
 
@@ -523,11 +581,15 @@ async function seed() {
     ],
   );
 
-  // Attach offered slot on the notified entry (requires migration 003)
-  const [colCheck] = await pool.query(
-    `SHOW COLUMNS FROM waitlist LIKE 'notified_doctor_id'`,
-  );
-  if (colCheck.length > 0) {
+  // Attach offered slot on the notified entry
+  let hasNotifiedCols = true;
+  if (!isPostgres) {
+    const [colCheck] = await pool.query(
+      `SHOW COLUMNS FROM waitlist LIKE 'notified_doctor_id'`,
+    );
+    hasNotifiedCols = colCheck.length > 0;
+  }
+  if (hasNotifiedCols) {
     const [notifiedRows] = await pool.query(
       `SELECT id FROM waitlist WHERE patient_id = ? AND status = 'notified' LIMIT 1`,
       [ids.wl_note],
@@ -548,8 +610,14 @@ async function seed() {
 
   console.log('  ✓ waitlist (waiting / notified / booked)');
 
-  await pool.end();
+  if (closePool) {
+    await pool.end();
+  }
   printCredentials();
+}
+
+export async function seedForCloud() {
+  await seed({ keepExisting: false, closePool: false });
 }
 
 function printCredentials() {
@@ -565,13 +633,15 @@ function printCredentials() {
   console.log(`           (notified — Book now on My waitlist)\n`);
 }
 
-seed().catch(async (err) => {
-  console.error('Seed failed:', err.message);
-  console.error(err);
-  try {
-    await pool.end();
-  } catch {
-    /* ignore */
-  }
-  process.exit(1);
-});
+seed({ keepExisting: process.argv.includes('--keep'), closePool: true }).catch(
+  async (err) => {
+    console.error('Seed failed:', err.message);
+    console.error(err);
+    try {
+      await pool.end();
+    } catch {
+      /* ignore */
+    }
+    process.exit(1);
+  },
+);

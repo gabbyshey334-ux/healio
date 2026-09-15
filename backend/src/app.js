@@ -13,11 +13,21 @@ import doctorRoutes from './routes/doctors.js';
 import appointmentRoutes from './routes/appointments.js';
 import waitlistRoutes from './routes/waitlist.js';
 import adminRoutes from './routes/admin.js';
+import { ensureCloudBootstrap } from './bootstrap.js';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use(async (_req, _res, next) => {
+  try {
+    await ensureCloudBootstrap();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 app.get('/api/health', (_req, res) => {
   res.status(200).json({
