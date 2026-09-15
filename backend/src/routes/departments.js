@@ -44,7 +44,7 @@ router.get('/:id/doctors', async (req, res) => {
     const [doctors] = await pool.query(
       `SELECT id, department_id, first_name, last_name, specialization, is_active
        FROM doctors
-       WHERE department_id = ? AND is_active = 1
+       WHERE department_id = ? AND is_active
        ORDER BY last_name ASC, first_name ASC`,
       [departmentId],
     );
