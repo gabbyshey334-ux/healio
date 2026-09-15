@@ -39,8 +39,14 @@ export async function ensureCloudBootstrap() {
         const sql = fs.readFileSync(schemaPath, 'utf8');
         const statements = sql
           .split(/;\s*\n/)
-          .map((s) => s.trim())
-          .filter((s) => s.length > 0 && !s.startsWith('--'));
+          .map((s) =>
+            s
+              .split('\n')
+              .filter((line) => !/^\s*--/.test(line))
+              .join('\n')
+              .trim(),
+          )
+          .filter((s) => s.length > 0);
 
         console.log(
           `[bootstrap] Applying ${statements.length} schema statements…`,
